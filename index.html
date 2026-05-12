@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elecciones 2023 — Tigre (Sección 113)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #header {
+      position: relative;
+      z-index: 1000;
+      background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
+      border-bottom: 1px solid #30363d;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    #header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: linear-gradient(90deg, #58a6ff, #79c0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      white-space: nowrap;
+    }
+    #header .subtitle { font-size: 0.78rem; color: #8b949e; }
+    #circuit-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      flex-wrap: wrap;
+    }
+    #circuit-controls label { font-size: 0.78rem; color: #8b949e; }
+    #circuit-select {
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #e6edf3;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    #circuit-select:focus { outline: none; border-color: #58a6ff; }
+    .btn {
+      background: #238636;
+      border: 1px solid #2ea043;
+      color: #fff;
+      border-radius: 6px;
+      padding: 5px 14px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+    .btn:hover { background: #2ea043; }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { background: #21262d; border-color: #30363d; color: #6e7681; cursor: not-allowed; }
+    #map { flex: 1; width: 100%; }
+    #overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: rgba(13, 17, 23, 0.88);
+      backdrop-filter: blur(4px);
+    }
+    #overlay.hidden { display: none; }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #30363d;
+      border-top-color: #58a6ff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #overlay p { font-size: 0.9rem; color: #8b949e; }
+    #overlay .error-box {
+      background: #1f1215;
+      border: 1px solid #f85149;
+      border-radius: 8px;
+      padding: 20px 28px;
+      max-width: 440px;
+      text-align: center;
+    }
+    #overlay .error-box h2 { color: #f85149; margin-bottom: 8px; font-size: 1rem; }
+    #overlay .error-box p  { color: #ccc; font-size: 0.85rem; line-height: 1.5; }
+    #overlay .error-box .btn { margin-top: 14px; background: #da3633; border-color: #f85149; }
+    #legend {
+      position: absolute;
+      bottom: 28px;
+      right: 12px;
+      z-index: 1000;
+      background: rgba(13, 17, 23, 0.92);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 14px 16px;
+      min-width: 200px;
+      max-width: 260px;
+      backdrop-filter: blur(6px);
+      pointer-events: none;
+    }
+    #legend h3 {
+      font-size: 0.75rem;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .legend-label { font-size: 0.78rem; color: #e6edf3; }
+    .legend-pct   { font-size: 0.72rem; color: #8b949e; margin-left: auto; }
+    #stats-bar {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      gap: 12px;
+      pointer-events: none;
+    }
+    .stat-chip {
+      background: rgba(13, 17, 23, 0.92);
+      border: 1px solid #30363d;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.78rem;
+      backdrop-filter: blur(6px);
+      white-space: nowrap;
+    }
+    .stat-chip span { color: #58a6ff; font-weight: 700; }
+    .leaflet-popup-content-wrapper {
+      background: #161b22 !important;
+      border: 1px solid #30363d !important;
+      border-radius: 10px !important;
+      color: #e6edf3 !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,.6) !important;
+    }
+    .leaflet-popup-tip { background: #161b22 !important; }
+    .leaflet-popup-content { margin: 14px 16px !important; min-width: 220px; }
+    .popup-title { font-size: 0.85rem; font-weight: 700; color: #79c0ff; margin-bottom: 2px; }
+    .popup-subtitle { font-size: 0.72rem; color: #6e7681; margin-bottom: 10px; }
+    .popup-total {
+      font-size: 0.78rem;
+      color: #8b949e;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #21262d;
+    }
+    .popup-total b { color: #e6edf3; }
+    .party-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .party-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .party-name { font-size: 0.76rem; color: #cdd9e5; flex: 1; }
+    .party-votes { font-size: 0.76rem; color: #8b949e; }
+    .party-pct   { font-size: 0.76rem; font-weight: 700; min-width: 38px; text-align: right; }
+    .bar-wrap {
+      height: 3px;
+      background: #21262d;
+      border-radius: 2px;
+      margin-bottom: 8px;
+      margin-left: 18px;
+    }
+    .bar-fill { height: 100%; border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <h1>Mapa Electoral — Tigre 2023</h1>
+    <div class="subtitle">Elecciones Generales · Sección 113 · Distrito Buenos Aires</div>
+  </div>
+  <div id="circuit-controls">
+    <label for="circuit-select">Circuito:</label>
+    <select id="circuit-select">
+      <option value="">Toda la sección</option>
+      <option value="1">Tigre Centro</option>
+      <option value="2">Benavídez</option>
+      <option value="3">Don Torcuato</option>
+      <option value="4">El Talar</option>
+      <option value="5">General Pacheco</option>
+      <option value="6">Ricardo Rojas</option>
+      <option value="7">Rincón de Milberg</option>
+      <option value="8">Dique Luján</option>
+    </select>
+    <button class="btn" id="load-btn" onclick="loadData()">Cargar resultados</button>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<div id="stats-bar" style="display:none">
+  <div class="stat-chip">Participación: <span id="stat-participation">—</span></div>
+  <div class="stat-chip">Votos válidos: <span id="stat-valid">—</span></div>
+  <div class="stat-chip">Mesas escrutadas: <span id="stat-mesas">—</span></div>
+</div>
+
+<div id="legend" style="display:none">
+  <h3>Agrupaciones</h3>
+  <div id="legend-items"></div>
+</div>
+
+<div id="overlay">
+  <div class="spinner"></div>
+  <p id="overlay-msg">Inicializando mapa…</p>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const API_BASE = 'https://resultados.mininterior.gob.ar/api/resultados/getResultados';
+
+const BASE_PARAMS = {
+  anioEleccion: 2023,
+  tipoRecuento: 1,
+  tipoEleccion: 2,
+  distritoId: 2,
+  seccionId: 113,
+};
+
+const CIRCUITOS = {
+  '':  { nombre: 'Tigre (sección completa)', lat: -34.426, lng: -58.579, zoom: 12 },
+  '1': { nombre: 'Tigre Centro',             lat: -34.426, lng: -58.579, zoom: 13 },
+  '2': { nombre: 'Benavídez',                lat: -34.394, lng: -58.681, zoom: 13 },
+  '3': { nombre: 'Don Torcuato',             lat: -34.474, lng: -58.614, zoom: 13 },
+  '4': { nombre: 'El Talar',                 lat: -34.453, lng: -58.640, zoom: 13 },
+  '5': { nombre: 'General Pacheco',          lat: -34.460, lng: -58.659, zoom: 13 },
+  '6': { nombre: 'Ricardo Rojas',            lat: -34.443, lng: -58.592, zoom: 13 },
+  '7': { nombre: 'Rincón de Milberg',        lat: -34.400, lng: -58.598, zoom: 13 },
+  '8': { nombre: 'Dique Luján',              lat: -34.384, lng: -58.625, zoom: 13 },
+};
+
+const PALETTE = [
+  '#58a6ff', '#f78166', '#3fb950', '#d2a8ff',
+  '#ffa657', '#79c0ff', '#56d364', '#ff7b72', '#8b949e',
+];
+
+let map, markersLayer, currentData = null;
+
+function initMap() {
+  map = L.map('map', {
+    center: [-34.426, -58.579],
+    zoom: 12,
+    zoomControl: false,
+    attributionControl: true,
+  });
+  L.control.zoom({ position: 'topright' }).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    subdomains: 'abcd',
+    maxZoom: 19,
+  }).addTo(map);
+  markersLayer = L.layerGroup().addTo(map);
+}
+
+async function fetchResultados(circuitoId = '') {
+  const params = { ...BASE_PARAMS };
+  if (circuitoId) params.circuitoId = circuitoId;
+  const qs = new URLSearchParams(
+    Object.entries(params).map(([k, v]) => [k, String(v)])
+  ).toString();
+  const url = `${API_BASE}?${qs}`;
+  console.log('[API] GET', url);
+  const res = await fetch(url, {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+  return res.json();
+}
+
+function parseResultados(json) {
+  const data = json?.data ?? json;
+  const meta = {
+    electores:       safeInt(data?.electores ?? data?.totalElectores),
+    votantes:        safeInt(data?.votantes  ?? data?.totalVotantes),
+    mesasEscrutadas: safeInt(data?.mesasEscrutadas),
+    mesasTotales:    safeInt(data?.mesasTotales),
+    participacion:   null,
+  };
+  if (meta.electores && meta.votantes)
+    meta.participacion = ((meta.votantes / meta.electores) * 100).toFixed(2);
+
+  const agrupaciones = [];
+  const rawA = data?.agrupaciones ?? [];
+  const rawB = data?.resultados?.agrupaciones ?? [];
+  const rawC = Array.isArray(data) ? data : [];
+  const raw  = rawA.length ? rawA : rawB.length ? rawB : rawC;
+
+  for (const ag of raw) {
+    const votos = safeInt(ag?.votos ?? ag?.votosTotales ?? ag?.cantVotos);
+    if (votos === null) continue;
+    agrupaciones.push({
+      id:         ag?.agrupacionId ?? ag?.id ?? ag?.idAgrupacion ?? '?',
+      nombre:     ag?.nombre ?? ag?.nombreAgrupacion ?? ag?.agrupacion ?? 'Sin nombre',
+      votos,
+      porcentaje: parseFloat(ag?.porcentaje ?? ag?.pct ?? 0),
+    });
+  }
+
+  agrupaciones.sort((a, b) => b.votos - a.votos);
+  const totalVotos = agrupaciones.reduce((s, a) => s + a.votos, 0);
+  for (const ag of agrupaciones)
+    if (!ag.porcentaje && totalVotos > 0)
+      ag.porcentaje = parseFloat(((ag.votos / totalVotos) * 100).toFixed(2));
+
+  return { meta, agrupaciones, totalVotos };
+}
+
+function safeInt(v) { const n = parseInt(v, 10); return isNaN(n) ? null : n; }
+function getColor(i) { return PALETTE[Math.min(i, PALETTE.length - 1)]; }
+
+function fmt(n) {
+  if (n === null || n === undefined) return '—';
+  return Number(n).toLocaleString('es-AR');
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function buildPopupHTML(key, parsed) {
+  const ci = CIRCUITOS[key] ?? CIRCUITOS[''];
+  const { meta, agrupaciones, totalVotos } = parsed;
+
+  let partHTML = '';
+  if (meta.participacion) {
+    partHTML = `<div class="popup-total">
+      Electores: <b>${fmt(meta.electores)}</b> ·
+      Votantes: <b>${fmt(meta.votantes)}</b> ·
+      Participación: <b>${meta.participacion}%</b>
+    </div>`;
+  } else if (totalVotos) {
+    partHTML = `<div class="popup-total">Total votos procesados: <b>${fmt(totalVotos)}</b></div>`;
+  }
+
+  let rows = '';
+  agrupaciones.forEach((ag, i) => {
+    const color = getColor(i);
+    const pct   = ag.porcentaje.toFixed(1);
+    rows += `
+      <div class="party-row">
+        <span class="party-dot" style="background:${color}"></span>
+        <span class="party-name">${escHtml(ag.nombre)}</span>
+        <span class="party-votes">${fmt(ag.votos)}</span>
+        <span class="party-pct" style="color:${color}">${pct}%</span>
+      </div>
+      <div class="bar-wrap">
+        <div class="bar-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div>
+      </div>`;
+  });
+
+  const mesas = (meta.mesasEscrutadas && meta.mesasTotales)
+    ? `<div style="font-size:.7rem;color:#6e7681;margin-top:8px">Mesas: ${meta.mesasEscrutadas}/${meta.mesasTotales}</div>`
+    : '';
+
+  return `
+    <div class="popup-title">${escHtml(ci.nombre)}</div>
+    <div class="popup-subtitle">Elecciones Generales 2023 · Categoría Presidencial</div>
+    ${partHTML}
+    ${rows || '<p style="color:#6e7681;font-size:.8rem">Sin datos de agrupaciones</p>'}
+    ${mesas}`;
+}
+
+function updateLegend(agrupaciones) {
+  document.getElementById('legend-items').innerHTML =
+    agrupaciones.slice(0, 8).map((ag, i) => `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${getColor(i)}"></div>
+        <span class="legend-label">${escHtml(ag.nombre.length > 28 ? ag.nombre.slice(0,26)+'…' : ag.nombre)}</span>
+        <span class="legend-pct">${ag.porcentaje.toFixed(1)}%</span>
+      </div>`).join('');
+  document.getElementById('legend').style.display = 'block';
+}
+
+function updateStats(meta) {
+  if (!meta.participacion) return;
+  document.getElementById('stat-participation').textContent = meta.participacion + '%';
+  document.getElementById('stat-valid').textContent = fmt(meta.votantes);
+  document.getElementById('stat-mesas').textContent = (meta.mesasEscrutadas && meta.mesasTotales)
+    ? `${meta.mesasEscrutadas}/${meta.mesasTotales}` : '—';
+  document.getElementById('stats-bar').style.display = 'flex';
+}
+
+function renderMarkers(circuitosData) {
+  markersLayer.clearLayers();
+  for (const [key, { parsed, circuitoInfo }] of Object.entries(circuitosData)) {
+    const { agrupaciones } = parsed;
+    if (!agrupaciones.length) continue;
+    const winner = agrupaciones[0];
+    const color  = getColor(0);
+    const pct    = winner.porcentaje.toFixed(1);
+    const radius = 14 + Math.min(winner.porcentaje / 4, 12);
+    const marker = L.circleMarker([circuitoInfo.lat, circuitoInfo.lng], {
+      radius, fillColor: color, color: '#fff',
+      weight: 2, opacity: 0.9, fillOpacity: 0.85,
+    });
+    marker.bindPopup(L.popup({ maxWidth: 320 }).setContent(buildPopupHTML(key, parsed)));
+    marker.bindTooltip(
+      `<b>${circuitoInfo.nombre}</b><br>${escHtml(winner.nombre)}: ${pct}%`,
+      { direction: 'top', sticky: false }
+    );
+    marker.addTo(markersLayer);
+  }
+}
+
+async function loadData() {
+  const btn    = document.getElementById('load-btn');
+  const selVal = document.getElementById('circuit-select').value;
+  btn.disabled = true;
+  showOverlay('Consultando API de resultados electorales…');
+  try {
+    const json   = await fetchResultados(selVal);
+    const parsed = parseResultados(json);
+    const ci     = CIRCUITOS[selVal] ?? CIRCUITOS[''];
+    const data   = { [selVal]: { parsed, circuitoInfo: ci } };
+
+    updateLegend(parsed.agrupaciones);
+    updateStats(parsed.meta);
+    renderMarkers(data);
+    currentData = data;
+    map.flyTo([ci.lat, ci.lng], ci.zoom, { duration: 1 });
+    hideOverlay();
+
+    if (!parsed.agrupaciones.length)
+      showError('Sin datos', 'La API no devolvió agrupaciones para este circuito.');
+
+  } catch (err) {
+    console.error('[loadData]', err);
+    let msg = err.message ?? 'Error desconocido';
+    if (err.name === 'TimeoutError' || msg.includes('timeout'))
+      msg = 'Timeout 15s — reintente en unos momentos.';
+    else if (msg.includes('Failed to fetch') || msg.includes('NetworkError'))
+      msg = 'Sin conexión a la API. Verifique su red.';
+    else if (msg.includes('CORS'))
+      msg = 'Bloqueado por CORS — pruebe desde un servidor local.';
+    showError('Error al cargar resultados', msg);
+    loadDemoData();
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function loadDemoData() {
+  const DEMO = [
+    { id: 135, nombre: 'La Libertad Avanza',       votos: 42150, porcentaje: 34.2 },
+    { id: 136, nombre: 'Unión por la Patria',       votos: 38920, porcentaje: 31.6 },
+    { id: 137, nombre: 'Juntos por el Cambio',      votos: 28430, porcentaje: 23.1 },
+    { id: 138, nombre: 'Hacemos Coalición Federal', votos: 6800,  porcentaje: 5.5  },
+    { id: 139, nombre: 'Frente de Izquierda',       votos: 4500,  porcentaje: 3.7  },
+    { id: 140, nombre: 'Otros',                     votos: 2380,  porcentaje: 1.9  },
+  ];
+  const DEMO_META = {
+    electores: 280000, votantes: 123180,
+    participacion: '43.99', mesasEscrutadas: 420, mesasTotales: 480,
+  };
+  const circuitosData = {};
+  for (const [key, ci] of Object.entries(CIRCUITOS)) {
+    if (key === '') continue;
+    const factor = 0.8 + Math.random() * 0.4;
+    const ags = DEMO.map(ag => ({ ...ag, votos: Math.round(ag.votos * factor * 0.12) }));
+    ags.sort((a, b) => b.votos - a.votos);
+    const total = ags.reduce((s, a) => s + a.votos, 0);
+    ags.forEach(ag => { ag.porcentaje = parseFloat(((ag.votos / total) * 100).toFixed(2)); });
+    circuitosData[key] = { parsed: { meta: DEMO_META, agrupaciones: ags, totalVotos: total }, circuitoInfo: ci };
+  }
+  renderMarkers(circuitosData);
+  updateLegend(DEMO);
+  document.getElementById('stat-participation').textContent = DEMO_META.participacion + '%';
+  document.getElementById('stat-valid').textContent         = fmt(DEMO_META.votantes);
+  document.getElementById('stat-mesas').textContent         = `${DEMO_META.mesasEscrutadas}/${DEMO_META.mesasTotales}`;
+  document.getElementById('stats-bar').style.display = 'flex';
+  document.getElementById('legend').style.display    = 'block';
+
+  const notice = document.createElement('div');
+  notice.style.cssText = `position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+    z-index:2000;background:#5a3825;border:1px solid #ffa657;border-radius:8px;
+    padding:8px 18px;font-size:.78rem;color:#ffa657;pointer-events:none;backdrop-filter:blur(4px);`;
+  notice.textContent = '⚠ Modo demostración — datos de ejemplo (API no disponible)';
+  document.body.appendChild(notice);
+  setTimeout(() => notice.remove(), 8000);
+}
+
+function showOverlay(msg) {
+  const el = document.getElementById('overlay');
+  el.innerHTML = `<div class="spinner"></div><p>${escHtml(msg)}</p>`;
+  el.classList.remove('hidden');
+}
+function hideOverlay() { document.getElementById('overlay').classList.add('hidden'); }
+function showError(title, detail) {
+  const el = document.getElementById('overlay');
+  el.innerHTML = `<div class="error-box">
+    <h2>${escHtml(title)}</h2>
+    <p>${escHtml(detail)}</p>
+    <button class="btn" onclick="hideOverlay()">Cerrar y ver demo</button>
+  </div>`;
+  el.classList.remove('hidden');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initMap();
+  setTimeout(loadData, 400);
+});
+</script>
+</body>
+</html>
