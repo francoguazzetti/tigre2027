@@ -1,0 +1,274 @@
+[
+  {
+    "id": "00530",
+    "mesas": 213,
+    "electores": 77026,
+    "total_votos": 47743,
+    "winner_nombre": "UNION POR LA PATRIA",
+    "winner_votos": 23810,
+    "winner_pct": 49.87,
+    "agrupaciones": [
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 23810,
+        "pct": 49.87
+      },
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 12873,
+        "pct": 26.96
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 9428,
+        "pct": 19.75
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 1632,
+        "pct": 3.42
+      }
+    ],
+    "lat": -34.426,
+    "lng": -58.579,
+    "geo_source": "aproximado_manual"
+  },
+  {
+    "id": "00533",
+    "mesas": 20,
+    "electores": 6808,
+    "total_votos": 4158,
+    "winner_nombre": "UNION POR LA PATRIA",
+    "winner_votos": 2001,
+    "winner_pct": 48.12,
+    "agrupaciones": [
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 2001,
+        "pct": 48.12
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 888,
+        "pct": 21.36
+      },
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 851,
+        "pct": 20.47
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 418,
+        "pct": 10.05
+      }
+    ],
+    "lat": -34.384,
+    "lng": -58.625,
+    "geo_source": "aproximado_manual"
+  },
+  {
+    "id": "00534",
+    "mesas": 105,
+    "electores": 36855,
+    "total_votos": 26260,
+    "winner_nombre": "UNION POR LA PATRIA",
+    "winner_votos": 10851,
+    "winner_pct": 41.32,
+    "agrupaciones": [
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 10851,
+        "pct": 41.32
+      },
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 8866,
+        "pct": 33.76
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 5781,
+        "pct": 22.01
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 762,
+        "pct": 2.9
+      }
+    ],
+    "lat": -34.453,
+    "lng": -58.64,
+    "geo_source": "aproximado_manual"
+  },
+  {
+    "id": "00535",
+    "mesas": 145,
+    "electores": 51657,
+    "total_votos": 35458,
+    "winner_nombre": "UNION POR LA PATRIA",
+    "winner_votos": 17503,
+    "winner_pct": 49.36,
+    "agrupaciones": [
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 17503,
+        "pct": 49.36
+      },
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 8983,
+        "pct": 25.33
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 7579,
+        "pct": 21.37
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 1393,
+        "pct": 3.93
+      }
+    ],
+    "lat": -34.474,
+    "lng": -58.614,
+    "geo_source": "aproximado_manual"
+  },
+  {
+    "id": "00536",
+    "mesas": 135,
+    "electores": 47623,
+    "total_votos": 31491,
+    "winner_nombre": "UNION POR LA PATRIA",
+    "winner_votos": 17504,
+    "winner_pct": 55.58,
+    "agrupaciones": [
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 17504,
+        "pct": 55.58
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 6885,
+        "pct": 21.86
+      },
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 5980,
+        "pct": 18.99
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 1122,
+        "pct": 3.56
+      }
+    ],
+    "lat": -34.46,
+    "lng": -58.659,
+    "geo_source": "aproximado_manual"
+  },
+  {
+    "id": "0534A",
+    "mesas": 179,
+    "electores": 63377,
+    "total_votos": 43076,
+    "winner_nombre": "UNION POR LA PATRIA",
+    "winner_votos": 20850,
+    "winner_pct": 48.4,
+    "agrupaciones": [
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 20850,
+        "pct": 48.4
+      },
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 10435,
+        "pct": 24.22
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 10203,
+        "pct": 23.69
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 1588,
+        "pct": 3.69
+      }
+    ],
+    "lat": -34.394,
+    "lng": -58.681,
+    "geo_source": "aproximado_manual"
+  },
+  {
+    "id": "0535A",
+    "mesas": 179,
+    "electores": 63290,
+    "total_votos": 42685,
+    "winner_nombre": "UNION POR LA PATRIA",
+    "winner_votos": 24563,
+    "winner_pct": 57.54,
+    "agrupaciones": [
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 24563,
+        "pct": 57.54
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 9096,
+        "pct": 21.31
+      },
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 7195,
+        "pct": 16.86
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 1831,
+        "pct": 4.29
+      }
+    ],
+    "lat": -34.443,
+    "lng": -58.592,
+    "geo_source": "aproximado_manual"
+  },
+  {
+    "id": "0536A",
+    "mesas": 22,
+    "electores": 7682,
+    "total_votos": 5772,
+    "winner_nombre": "JUNTOS POR EL CAMBIO",
+    "winner_votos": 2340,
+    "winner_pct": 40.54,
+    "agrupaciones": [
+      {
+        "nombre": "JUNTOS POR EL CAMBIO",
+        "votos": 2340,
+        "pct": 40.54
+      },
+      {
+        "nombre": "UNION POR LA PATRIA",
+        "votos": 1885,
+        "pct": 32.66
+      },
+      {
+        "nombre": "LA LIBERTAD AVANZA",
+        "votos": 1396,
+        "pct": 24.19
+      },
+      {
+        "nombre": "FRENTE DE IZQUIERDA Y DE TRABAJADORES - UNIDAD",
+        "votos": 151,
+        "pct": 2.62
+      }
+    ],
+    "lat": -34.4,
+    "lng": -58.598,
+    "geo_source": "aproximado_manual"
+  }
+]
