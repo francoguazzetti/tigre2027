@@ -1,0 +1,42 @@
+{
+  "00530": {
+    "mesa_min": 1,
+    "mesa_max": 9043,
+    "n_mesas": 213
+  },
+  "00533": {
+    "mesa_min": 192,
+    "mesa_max": 211,
+    "n_mesas": 20
+  },
+  "00534": {
+    "mesa_min": 212,
+    "mesa_max": 9019,
+    "n_mesas": 105
+  },
+  "0534A": {
+    "mesa_min": 316,
+    "mesa_max": 9039,
+    "n_mesas": 179
+  },
+  "00535": {
+    "mesa_min": 488,
+    "mesa_max": 9025,
+    "n_mesas": 145
+  },
+  "0535A": {
+    "mesa_min": 627,
+    "mesa_max": 9050,
+    "n_mesas": 179
+  },
+  "00536": {
+    "mesa_min": 799,
+    "mesa_max": 9051,
+    "n_mesas": 135
+  },
+  "0536A": {
+    "mesa_min": 926,
+    "mesa_max": 947,
+    "n_mesas": 22
+  }
+}
