@@ -135,8 +135,9 @@ function escHtml(str) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function buildPopupHTML(key, parsed) {
+function buildPopupHTML(key, parsed, displayName = null) {
   const ci = CIRCUITOS[key] ?? CIRCUITOS[''];
+  const title = displayName ?? ci.nombre;
   const { meta, agrupaciones, totalVotos } = parsed;
 
   let partHTML = '';
@@ -171,7 +172,7 @@ function buildPopupHTML(key, parsed) {
     : '';
 
   return `
-    <div class="popup-title">${escHtml(ci.nombre)}</div>
+    <div class="popup-title">${escHtml(title)}</div>
     <div class="popup-subtitle">Elecciones Generales 2023 · Categoría Intendente</div>
     ${partHTML}
     ${rows || '<p style="color:#6e7681;font-size:.8rem">Sin datos de agrupaciones</p>'}
@@ -258,9 +259,10 @@ function renderChoropleth(circuitosData) {
       const cid = feature.properties.circuito_id;
       const d   = circuitosData[cid];
 
+      const featureName = feature.properties.nombre;
       if (d) {
         layer.bindPopup(
-          L.popup({ maxWidth: 340 }).setContent(buildPopupHTML(cid, d.parsed)),
+          L.popup({ maxWidth: 340 }).setContent(buildPopupHTML(cid, d.parsed, featureName)),
           { autoPan: true }
         );
       }
@@ -268,10 +270,9 @@ function renderChoropleth(circuitosData) {
       layer.on('mouseover', function () {
         this.setStyle(circuitStyle(cid, true));
         this.bringToFront();
-        const ci = CIRCUITOS[cid];
         const winner = d?.parsed.agrupaciones[0];
         this.bindTooltip(
-          `<b>${ci?.nombre ?? cid}</b>${winner ? `<br>${escHtml(winner.nombre)}: ${winner.porcentaje.toFixed(1)}%` : ''}`,
+          `<b>${escHtml(featureName)}</b>${winner ? `<br>${escHtml(winner.nombre)}: ${winner.porcentaje.toFixed(1)}%` : ''}`,
           { sticky: true, direction: 'top' }
         ).openTooltip();
       });
