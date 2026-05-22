@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intendente 2023 — Tigre (Sección 113)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <h1>Mapa Electoral — Tigre 2023</h1>
+    <div class="subtitle">Elecciones Generales · Intendente · Sección 113 · Distrito Buenos Aires</div>
+  </div>
+  <div id="circuit-controls">
+    <label for="circuit-select">Circuito:</label>
+    <select id="circuit-select" onchange="focusCircuit()">
+      <option value="">Toda la sección</option>
+      <option value="00530">Tigre Centro</option>
+      <option value="0534A">Benavídez</option>
+      <option value="00535">Don Torcuato</option>
+      <option value="00534">El Talar</option>
+      <option value="00536">General Pacheco</option>
+      <option value="0535A">Ricardo Rojas</option>
+      <option value="0536A">Rincón de Milberg</option>
+      <option value="00533">Dique Luján</option>
+    </select>
+    <button class="btn" id="load-btn" onclick="loadData()">Actualizar datos</button>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<div id="stats-bar" style="display:none">
+  <div class="stat-chip">Participación: <span id="stat-participation">—</span></div>
+  <div class="stat-chip">Votos válidos: <span id="stat-valid">—</span></div>
+  <div class="stat-chip">Mesas escrutadas: <span id="stat-mesas">—</span></div>
+</div>
+
+<div id="legend" style="display:none">
+  <h3>Agrupaciones</h3>
+  <div id="legend-items"></div>
+</div>
+
+<div id="overlay">
+  <div class="spinner"></div>
+  <p id="overlay-msg">Inicializando mapa…</p>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
